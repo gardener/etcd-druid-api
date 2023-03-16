@@ -2,13 +2,19 @@ module github.com/gardener/etcd-druid-api
 
 go 1.20
 
+// The following dependencies are compile-time dependencies.
 require (
-	k8s.io/api v0.26.1
-	k8s.io/apimachinery v0.26.1
+	k8s.io/api v0.26.2
+	k8s.io/apimachinery v0.26.2
 )
 
+// The following dependencies are not compile-time dependencies.
+// Unfortunately go does not clearly distinguish between compile-time/test/tool dependencies.
+// To demarcate this clearly contributors should clearly seggreate them into separate `require` blocks.
 require (
+	// required to generate api-docs.
 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.0
+	// required to generate manifests, DeepCopy functions etc.
 	sigs.k8s.io/controller-tools v0.11.3
 )
 
@@ -29,9 +35,9 @@ require (
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/net v0.4.0 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.4.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//go:generate gen-crd-api-reference-docs -api-dir . -config ../../hack/api-reference/druid-config.json -template-dir ../../hack/api-reference/template -out-file ../../docs/api-reference/druid.md
+
 // Package v1alpha1 is the v1alpha1 version of the etcd-druid API.
 // +groupName=druid.gardener.cloud
-package v1alpha1 // import github.com/gardener/etcd-druid-api/core/v1alpha1
+package v1alpha1 // import "github.com/gardener/etcd-druid-api/core/v1alpha1"
