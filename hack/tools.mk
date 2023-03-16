@@ -1,3 +1,21 @@
+# Copyright 2023 SAP SE or an SAP affiliate company
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This make file is supposed to be included in the top-level make file.
+# Recipes in the top-level make file should declare dependencies on the respective tool recipes (e.g. $(CONTROLLER_GEN))
+# as needed. If the required tool (version) is not built/installed yet, make will make sure to build/install it.
+# The *_VERSION variables in this file contain the "default" values, but can be overwritten in the top level make file.
 
 TOOLS_BIN_DIR              := $(TOOLS_DIR)/bin
 CONTROLLER_GEN             := $(TOOLS_BIN_DIR)/controller-gen
@@ -30,4 +48,3 @@ $(GOLANGCI_LINT): $(call tool_version_file,$(GOLANGCI_LINT),$(GOLANGCI_LINT_VERS
 
 $(GEN_CRD_API_REFERENCE_DOCS):
 	GOBIN=$(abspath $(TOOLS_BIN_DIR)) CGO_ENABLED=1 go install github.com/ahmetb/gen-crd-api-reference-docs@$(GEN_CRD_API_REFERENCE_DOCS_VERSION)
-
