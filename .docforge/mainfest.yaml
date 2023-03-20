@@ -1,0 +1,13 @@
+structure:
+  - name: _index.md
+    source: /README.md
+  - name: api-reference
+    properties:
+      frontmatter:
+        title: API Reference
+        weight: 1
+        aliases: "/api-reference"
+        categories:
+          - Developers
+    nodeSelector:
+      path: /docs/api-reference

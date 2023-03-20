@@ -25,3 +25,8 @@ generate: $(CONTROLLER_GEN) $(GEN_CRD_API_REFERENCE_DOCS)
 .PHONY: add-license-headers
 add-license-headers: $(GO_ADD_LICENSE)
 	@./hack/add_license_headers.sh ${YEAR}
+
+.PHONY: revendor
+revendor:
+	@env GO111MODULE=on go mod tidy
+	@env GO111MODULE=on go mod vendor
