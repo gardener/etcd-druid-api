@@ -2,6 +2,11 @@ module github.com/gardener/etcd-druid-api
 
 go 1.20
 
+// Unfortunately go does not clearly distinguish between compile-time/test/tool dependencies.
+// To demarcate this clearly contributors should clearly seggreate them into separate `require` blocks.
+// This will help the maintainers clearly understand the category of dependencies for this project.
+// Dependencies for an API project should be kept to the minimum.
+
 // The following dependencies are compile-time dependencies.
 require (
 	k8s.io/api v0.26.2
@@ -9,8 +14,8 @@ require (
 )
 
 // The following dependencies are not compile-time dependencies.
-// Unfortunately go does not clearly distinguish between compile-time/test/tool dependencies.
-// To demarcate this clearly contributors should clearly seggreate them into separate `require` blocks.
+// This is a bit unfortunate that this gets added as a dependency and that is due to the usage of
+// init function for which an empty import needs to be included for each of these dependencies.
 require (
 	// required to generate api-docs.
 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.0

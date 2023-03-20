@@ -73,11 +73,7 @@ func createEtcd(name string) *Etcd {
 			UID:       uuid.NewUUID(),
 		},
 		Spec: EtcdSpec{
-			Etcd:                  EtcdConfig{},
-			Backup:                BackupSpec{},
-			Common:                SharedConfig{},
-			SchedulingConstraints: SchedulingConstraints{},
-			Replicas:              0,
+			Replicas: 3,
 		},
 	}
 }
