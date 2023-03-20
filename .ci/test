@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+source "$(dirname "${0}")"/common.sh
+
+#################################################################
+
+echo "> Test..."
+make test
+echo "All tests passed"

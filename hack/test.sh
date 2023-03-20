@@ -16,18 +16,6 @@
 
 set -e
 
-GOLANGCI_LINT_CONFIG_FILE=""
+echo "> Test..."
 
-for arg in "$@"; do
-  case $arg in
-    --golangci-lint-config=*)
-    GOLANGCI_LINT_CONFIG_FILE="-c ${arg#*=}"
-    shift
-    ;;
-  esac
-done
-
-echo "> Check"
-
-echo "Executing golangci-lint"
-golangci-lint run $GOLANGCI_LINT_CONFIG_FILE --timeout 10m "$@"
+go test -v ./... -coverprofile cover.out

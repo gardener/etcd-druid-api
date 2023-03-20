@@ -30,3 +30,8 @@ add-license-headers: $(GO_ADD_LICENSE)
 revendor:
 	@env GO111MODULE=on go mod tidy
 	@env GO111MODULE=on go mod vendor
+
+.PHONY: test
+test:
+	@./hack/test.sh
+
