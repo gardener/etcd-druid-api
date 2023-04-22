@@ -48,8 +48,14 @@ const (
 )
 
 type EtcdDBCompactionConfig struct {
-	Mode      EtcdDBCompactionMode
-	Retention string
+	// Mode defines how auto-compaction is done by etcd.
+	// See [etcd-auto-compaction]: https://etcd.io/docs/v3.4/op-guide/maintenance/#auto-compaction
+	Mode EtcdDBCompactionMode
+	// RetentionDuration defines the retention window which is used by etcd when Mode is Periodic.
+	RetentionDuration *metav1.Duration
+	// RevisionDelta is used by etcd when Mode is Revision to compute the revision till which compaction needs to be done.
+	// Revision to compact on = <latest-revision> - RevisionDelta.
+	RevisionDelta *int32
 }
 
 type EtcdServiceTemplate struct {
