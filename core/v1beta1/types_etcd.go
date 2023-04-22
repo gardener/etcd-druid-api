@@ -65,6 +65,9 @@ type EtcdMemberTemplate struct {
 	// has been created then it is recommended that it has a high priority value as it impacts preemption of etcd pods.
 	PriorityClassName   *string                        `json:"priorityClassName,omitempty"`
 	VolumeClaimTemplate *EtcdMemberVolumeClaimTemplate `json:"volumeClaimTemplate,omitempty"`
+	//TODO: think on where should this be placed. Today it belongs here as it is intrinsic part
+	// of a member. However later if and when we plan to have one backup-restore per cluster, then it will not belong here.
+	BackupRestore BackupRestoreSpec
 }
 
 type EtcdMemberVolumeClaimTemplate struct {
