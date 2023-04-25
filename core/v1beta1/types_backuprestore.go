@@ -2,33 +2,19 @@ package v1beta1
 
 import (
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-type BackupRestoreSpec struct {
-	// Image defines the etcd container image and tag in the form of <image>:<tag>
-	// In gardener context there are three ways in which druid can determine the image for backup-restore container:
-	// 1. Image-Vector-Override (See https://github.com/gardener/gardener/blob/master/docs/deployment/image_vector.md) for additional information.
-	// 2. Image that is specified as part of BackupRestoreSpec
-	// 3. Druid maintains default image for backup-restore container.
-	// Druid will retrieve the image by looking at the above places in the order these have been specified.
-	// As soon as it finds the image it takes that image location and ignores the rest of the places.
-	// +optional
-	Image *string `json:"image,omitempty"`
-	// Resources defines compute Resources required by backup-restore container.
-	// More info: https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-	// +optional
-	Resources *corev1.ResourceRequirements `json:"resources,omitempty"`
-	// TLS <TODO>
+type BackupRestore struct {
+	Container *Container
+	// TLS
 	TLS *TLSConfig `json:"tls,omitempty"`
 
-	// Store defines the specification of a store for backing up snapshots (delta and full).
-	// +optional
-	Store          *StoreSpec
-	SnapshotConfig *SnapshotConfig
+	Snapshots *Snapshots
 
 	// EtcdLeaderMonitoringConfig contains configuration which backup-restore uses to track leadership changes for its peer etcd container.
-	EtcdLeaderMonitoringConfig *EtcdLeaderMonitoringConfig `json:"etcdLeaderMonitoringConfig,omitempty"`
+	EtcdLeaderMonitoringConfig *EtcdLeaderMonitoring `json:"etcdLeaderMonitoringConfig,omitempty"`
 }
 
 // CompressionAlgorithm is the algorithm used for compression of snapshots.
@@ -41,18 +27,43 @@ const (
 )
 
 type Compression struct {
-	Enabled   bool `json:"enabled"`
+	Enabled *bool `json:"enabled"`
+	// Algorithm determines how the algorithm that will be used for compressing snapshots.
+	// Supported algorithms are GZipCompression, LzwCompression and ZlibCompression. If compression is enabled
+	// and algorithm has not been set then a default value of GZipCompression will be used.
 	Algorithm *CompressionAlgorithm
 }
 
-type SnapshotConfig struct {
-	Compression *Compression `json:"compression,omitempty"`
+type DeltaSnapshot struct {
+	Enabled               *bool
+	Interval              *metav1.Duration
+	MemoryBufferThreshold *resource.Quantity
 }
 
-// EtcdLeaderMonitoringConfig contains configuration for backup-restore to determine etcd leadership changes.
+type FullSnapshot struct {
+	Cron    *string
+	Timeout *metav1.Duration
+}
+
+type Snapshots struct {
+	// Enabled indicates whether backup-restore should take snapshots.
+	// If it is not set then a default value of `true` will be used. If it is disabled then all other configuration
+	// will be ignored.
+	Enabled *bool
+	// Compression
+	Compression *Compression `json:"compression,omitempty"`
+	// Store defines the specification of a store for backing up snapshots (delta and full).
+	// +optional
+	Store *Store
+	// FullSnapshot
+	FullSnapshot  *FullSnapshot
+	DeltaSnapshot *DeltaSnapshot
+}
+
+// EtcdLeaderMonitoring contains configuration for backup-restore to determine etcd leadership changes.
 // As long as backup-restore is used as a side-car in every etcd pod, this configuration will be required. For setups
 // where there is a separate backup-restore pod for the entire etcd cluster, this configuration is not required to be set.
-type EtcdLeaderMonitoringConfig struct {
+type EtcdLeaderMonitoring struct {
 	// PollInterval is the interval at which the backup-restore should poll etcd for its leadership status.
 	// +optional
 	PollInterval *metav1.Duration `json:"pollInterval,omitempty"`
@@ -89,8 +100,8 @@ type GarbageCollectionConfig struct {
 	Interval *metav1.Duration         `json:"interval,omitempty"`
 }
 
-// StoreSpec defines parameters related to ObjectStore persisting backups
-type StoreSpec struct {
+// Store defines parameters related to ObjectStore persisting backups
+type Store struct {
 	// Container is the name of the container the backup is stored at.
 	// In case of an object store (StorageProvider in [S3, OSS, ABS, GCS, Swift, ECS, OCS]) container should not be nil,
 	// however in case of StorageProvider = Local it can be nil.
@@ -107,7 +118,6 @@ type StoreSpec struct {
 	// as it is required to connect to a remote object store. However, in case of StorageProvider = Local it can be nil.
 	// +optional
 	SecretRef *corev1.SecretReference `json:"secretRef,omitempty"`
-
 	// GarbageCollection is the configuration to manage garbage collection of stored (delta and full) snapshots in the store.
 	GarbageCollection *GarbageCollectionConfig `json:"garbageCollection,omitempty"`
 }
