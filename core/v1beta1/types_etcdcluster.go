@@ -4,6 +4,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 // EtcdCluster is the Schema for the etcds API
@@ -32,6 +33,7 @@ type EtcdClusterSpec struct {
 	Services                    EtcdServices
 	EtcdDBCompactionConfig      *EtcdDBCompactionConfig
 	SnapshotCompactionJobConfig *SnapshotCompactionJobConfig
+	SchedulingConstraints       *SchedulingConstraints
 }
 
 type EtcdClusterStatus struct {
@@ -90,4 +92,22 @@ type EtcdMemberVolumeClaimTemplate struct {
 	Name            string            `json:"name"`
 	StorageClass    string            `json:"storageClass"`
 	StorageCapacity resource.Quantity `json:"storageCapacity"`
+}
+
+// SchedulingConstraints defines the different scheduling constraints that must be applied to the
+// pod spec in the etcd StatefulSet.
+// Currently supported constraints are Affinity and TopologySpreadConstraints.
+// Specifying scheduling constraints would allow druid to add these scheduling constraints when it creates the StatefulSet.
+// There are other ways in which these constraints can be specified:
+// 1. One could define a cluster wide constraint. See https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#cluster-level-default-constraints
+// 2. Another way is to use a mutating webhook to inject scheduling constraints to StatefulSet based on several factors like failure tolerance etc. Gardener uses this method at present.
+// It is a conscious choice to not use k8s types (e.g. corev1.Affinity) and instead use `runtime.RawExtension`. Following are the reasons:
+// 1. Topology Spread Constraints has been changing for some time now. It would become difficult for us to continuously change the CRD definition to reflect the changes to the upstream feature.
+// 2. Having a complete spec for Affinity and TopologySpreadConstraints duplicated in CRD makes it extremely-big and hard to maintain.
+type SchedulingConstraints struct {
+	// Affinity are the simplest way to constraint pods to nodes. See https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity
+	Affinity *runtime.RawExtension
+	// TopologySpreadConstraints are a set of constraints that determine how the pods are spread across a cluster of nodes.
+	// See https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints
+	TopologySpreadConstraints []*runtime.RawExtension
 }
