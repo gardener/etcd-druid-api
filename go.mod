@@ -24,9 +24,7 @@ require (
 )
 
 // The following dependencies are test dependencies
-require (
-	github.com/onsi/gomega v1.24.2
-)
+require github.com/onsi/gomega v1.24.2
 
 require (
 	github.com/fatih/color v1.13.0 // indirect

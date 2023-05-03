@@ -134,6 +134,7 @@ gopkg.in/yaml.v3
 # k8s.io/api v0.26.2
 ## explicit; go 1.19
 k8s.io/api/admissionregistration/v1
+k8s.io/api/autoscaling/v1
 k8s.io/api/core/v1
 k8s.io/api/rbac/v1
 # k8s.io/apiextensions-apiserver v0.26.1

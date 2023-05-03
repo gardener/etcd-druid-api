@@ -1,6 +1,7 @@
 package v1beta1
 
 import (
+	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -40,6 +41,22 @@ type EtcdClusterStatus struct {
 	// ObservedGeneration is the most recent generation observed for this resource.
 	// +optional
 	ObservedGeneration *int64 `json:"observedGeneration,omitempty"`
+	Conditions         []Condition
+	// ScaleResourceRef is a reference to the resource that has a scale sub-resource defined.
+	// In case a VPA has been defined whose recommendations are applied to the scalable
+	// resource then druid consumers can inspect the applied resource recommendations by first getting a
+	// CrossVersionObjectReference to the scalable resource and fetching it using a client.
+	// In case of druid managed etcd cluster, the scalable resource will be a StatefulSet.
+	ScaleResourceRef *autoscalingv1.CrossVersionObjectReference
+	// Ready indicates if all etcd replicas are ready. This in turn will be governed by the readiness probe
+	// that has been defined on each etcd member. A value of 'true' indicates that all members of an etcd cluster
+	// are ready and a value of 'false' indicates that at least one member is not ready.
+	Ready *bool
+	// Quorate indicates if an etcd cluster is quorate. It is recommended to have an odd number of members in an etcd
+	// cluster. See [etcd failure tolerance]: https://etcd.io/docs/v3.3/faq/#what-is-failure-tolerance. For a 3 member
+	// etcd cluster to be quorate there should be at least 2 ready members. A value of 'true' indicates that etcd cluster
+	// has quorum and a value of 'false' indicates that etcd cluster has lost quorum.
+	Quorate *bool
 }
 
 type EtcdServices struct {
