@@ -24,7 +24,7 @@ generate: $(CONTROLLER_GEN) $(GEN_CRD_API_REFERENCE_DOCS)
 
 .PHONY: add-license-headers
 add-license-headers: $(GO_ADD_LICENSE)
-	@./hack/add_license_headers.sh ${YEAR}
+	@./hack/add_license_headers.sh
 
 .PHONY: revendor
 revendor:
